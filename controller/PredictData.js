@@ -2,7 +2,7 @@ const connection = require('../config/db');
 
 module.exports = {
     getAllPredict: async(req, res) => {
-        const sql = "SELECT * FROM Predictions"
+        const sql = "SELECT * FROM Predictions WHERE deleted_at IS NULL ORDER BY id DESC";
 
         try {
             const prediction = await new Promise((resolve, reject) => {

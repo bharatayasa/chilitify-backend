@@ -24,13 +24,13 @@ router.delete('/predicted/:id', AccesToken, checkRole('admin'), DataPrediction.d
 
 const DataUsers = require('../controller/UsersData');
 router.get('/user', AccesToken, checkRole('admin'), DataUsers.getAllUsers);
-router.get('/user/:id', AccesToken, checkRole('admin'));
-router.post('/user', AccesToken, checkRole('admin'));
-router.put('/user/:id', AccesToken, checkRole('admin'));
-router.delete('/user/:id', AccesToken, checkRole('admin'));
+router.get('/user/:id', AccesToken, checkRole('admin'), DataUsers.getUserById);
+router.post('/user', AccesToken, checkRole('admin'), DataUsers.addUser);
+router.put('/user/:id', AccesToken, checkRole('admin'), DataUsers.updateUser);
+router.delete('/user/:id', AccesToken, checkRole('admin'), DataUsers.deleteUser);
 
 const Predict = require('../controller/Predict');
-const upload = multer({ 
+const upload = multer({
     storage: multer.memoryStorage()
 });
 router.post('/predict', AccesToken, checkRole('user'), upload.single('file'), Predict.predict);
