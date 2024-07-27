@@ -3,8 +3,7 @@ const FormData = require('form-data');
 const dotenv = require('dotenv');
 const connection = require('../config/db');
 dotenv.config(); 
-// const model_api = process.env.MODEL_API;
-const model_api = process.env.MODEL_API_LOCAL; 
+const model_api = process.env.MODEL_API;
 
 module.exports = {
     predict: async (req, res) => {
