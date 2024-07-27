@@ -4,21 +4,34 @@ const multer = require('multer');
 const AccesToken = require('../middleware/auth');
 const checkRole = require('../middleware/checkRole');
 
+const server = require('../controller/Intro');
 const register = require('../controller/Register');
-router.post('/register', register.register)
-
-const login = require('../controller/Login')
-router.post('/login', login.login)
-
-const server = require('../controller/Intro')
-router.get('/', server.server)
+const login = require('../controller/Login');
+router.get('/', server.server);
+router.post('/register', register.register);
+router.post('/login', login.login);
 
 const DataDescription = require('../controller/DescriptionData');
-router.get('/description', AccesToken, checkRole('admin'), DataDescription.getAllDataDescription)
+router.get('/description', AccesToken, checkRole('admin'), DataDescription.getAllDataDescription);
+router.get('/description/:id', AccesToken, checkRole('admin'), DataDescription.getDataDescriptionById);
+router.post('/description', AccesToken, checkRole('admin'), DataDescription.addDataDescription);
+router.put('/description/:id', AccesToken, checkRole('admin'), DataDescription.updateDescriptionData);
+router.delete('/description/:id', AccesToken, checkRole('admin'), DataDescription.deleteDescriptionData);
+
+const DataPrediction = require('../controller/PredictData'); 
+router.get('/predicted', AccesToken, checkRole('admin'), DataPrediction.getAllPredict);
+router.delete('/predicted/:id', AccesToken, checkRole('admin'), DataPrediction.deletePrediction);
+
+const DataUsers = require('../controller/UsersData');
+router.get('/user', AccesToken, checkRole('admin'), DataUsers.getAllUsers);
+router.get('/user/:id', AccesToken, checkRole('admin'));
+router.post('/user', AccesToken, checkRole('admin'));
+router.put('/user/:id', AccesToken, checkRole('admin'));
+router.delete('/user/:id', AccesToken, checkRole('admin'));
 
 const Predict = require('../controller/Predict');
 const upload = multer({ 
-    storage: multer.memoryStorage() 
+    storage: multer.memoryStorage()
 });
 router.post('/predict', AccesToken, checkRole('user'), upload.single('file'), Predict.predict);
 
