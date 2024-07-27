@@ -20,6 +20,6 @@ const Predict = require('../controller/Predict');
 const upload = multer({ 
     storage: multer.memoryStorage() 
 });
-router.post('/predict', upload.single('file'), Predict.predict);
+router.post('/predict', AccesToken, checkRole('user'), upload.single('file'), Predict.predict);
 
 module.exports = router

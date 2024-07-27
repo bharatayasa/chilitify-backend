@@ -44,12 +44,26 @@ module.exports = {
                 });
             });
 
+            
+            const {description_id, user_id,	confidence} = req.body
+            const insertPredict = `INSERT INTO Predictions (description_id, user_id, confidence) VALUE (${data.id}, ${req.user.id}, ${result.confidence})`
+            const insertPrediction = await new Promise((resolve, reject) => {
+                connection.query(insertPredict, [description_id, user_id,	confidence], (error, result) => {
+                    if (error) {
+                        reject(error)
+                    }
+                    resolve(result)
+                })
+            })
+
+            const insertPredictstatus = insertPrediction.protocol41
             return res.status(200).json({
                 message: "Success to predict",
+                user_id: req.user.id,
                 data,
-                confidence: result.confidence
+                confidence: result.confidence,
+                insertPredictstatus
             });
-
         } catch (error) {
             console.error('Error uploading file:', error);
             return res.status(500).send('An error occurred');
