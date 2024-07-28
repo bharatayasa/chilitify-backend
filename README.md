@@ -1,4 +1,4 @@
-# Express API Router
+# Backend Chilitify
 
 This repository contains the Express API router for handling various routes related to user management, prediction data, description data, and more. It integrates middleware for authentication and role-based access control.
 
@@ -6,7 +6,7 @@ This repository contains the Express API router for handling various routes rela
 
 1. **Clone the repository:**
     ```bash
-    git clone <repository-url>
+    git clone <https://github.com/bharatayasa/chilitify-backend.git>
     ```
 
 2. **Navigate to the project directory:**
@@ -84,4 +84,4 @@ Ensure that you have the necessary environment variables and configuration set u
 To start the server, use:
 
 ```bash
-npm run dev
+npm run dev 
