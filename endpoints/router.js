@@ -29,6 +29,11 @@ router.post('/user', AccesToken, checkRole('admin'), DataUsers.addUser);
 router.put('/user/:id', AccesToken, checkRole('admin'), DataUsers.updateUser);
 router.delete('/user/:id', AccesToken, checkRole('admin'), DataUsers.deleteUser);
 
+const Dashboard = require('../controller/Dashboard');
+router.get('/total/prediction', AccesToken, checkRole('admin'), Dashboard.totalPrediction);
+router.get('/total/users', AccesToken, checkRole('admin'), Dashboard.totalUser);
+router.get('/total/class', AccesToken, checkRole('admin'), Dashboard.totalClass);
+
 const Predict = require('../controller/Predict');
 const upload = multer({storage: multer.memoryStorage()});
 router.post('/predict', AccesToken, checkRole('user'), upload.single('file'), Predict.predict);
@@ -36,15 +41,9 @@ router.post('/predict', AccesToken, checkRole('user'), upload.single('file'), Pr
 const history = require('../controller/History'); 
 router.get('/history', AccesToken, checkRole('user'), history.readHistory);
 router.delete('/history/:id', AccesToken, checkRole('user'), history.deleteHistory);
+
 // TODO
 // update password
 // update datadiri
-
-// admin
-// admin dashboard
-// data total / class penyakit (diagram)
-// total prediksi dalam 1 hari
-// total prediksi
-// total user
 
 module.exports = router
