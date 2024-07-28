@@ -42,8 +42,9 @@ const history = require('../controller/History');
 router.get('/history', AccesToken, checkRole('user'), history.readHistory);
 router.delete('/history/:id', AccesToken, checkRole('user'), history.deleteHistory);
 
-// TODO
-// update password
-// update datadiri
+const UserMe = require('../controller/UserMe')
+router.get('/get/me', AccesToken, checkRole('user'), UserMe.getMe);
+router.post('/update/me', AccesToken, checkRole('user'), UserMe.updateMe);
+router.post('/update/me/password', AccesToken, checkRole('user'), UserMe.updatePassword);
 
 module.exports = router
