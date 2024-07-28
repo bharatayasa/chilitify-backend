@@ -6,7 +6,7 @@ This repository contains the Express API router for handling various routes rela
 
 1. **Clone the repository:**
     ```bash
-    git clone <https://github.com/bharatayasa/chilitify-backend.git>
+    git clone https://github.com/bharatayasa/chilitify-backend.git
     ```
 
 2. **Navigate to the project directory:**
