@@ -1,3 +1,4 @@
+'use stric'
 const express = require('express');
 const dotenv = require('dotenv');
 const router = require('./endpoints/router');
@@ -17,7 +18,7 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(router);
 
-const port = process.env.PORT || 3000; 
+const port = process.env.PORT; 
 const host = process.env.HOST; 
 
 app.listen(port, host, () => {

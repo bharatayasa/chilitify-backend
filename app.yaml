@@ -1,5 +1,5 @@
-runtime: nodejs18
-service: icha
+runtime: nodejs20
+service: default
 env: standard
 
 instance_class: F4
