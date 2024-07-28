@@ -1,56 +1,115 @@
 const connection = require('../config/db');
 const bcrypt = require('bcrypt');
+const moment = require('moment');
 
 module.exports = {
-    getAllUsers: async(req, res) => {
-        const sql = "SELECT * FROM users ORDER BY users.id DESC"; 
+    getAllUsers: async (req, res) => {
+        const sql = `
+                SELECT
+                    id, 
+                    username, 
+                    name, 
+                    email,
+                    role, 
+                    created_at, 
+                    updated_at, 
+                    deleted_at 
+                FROM 
+                    users 
+                ORDER BY 
+                    id DESC
+            `;
 
         try {
-            const user = await new Promise((resolve, reject) => {
+            const users = await new Promise((resolve, reject) => {
                 connection.query(sql, (error, result) => {
                     if (error) {
-                        reject(error); 
+                        return reject(error);
                     }
-                    resolve(result); 
-                })
-            })
+                    resolve(result);
+                });
+            });
+
+            const formatUser = users.map(user => ({
+                id: user.id,
+                username: user.username,
+                name: user.name,
+                email: user.email,
+                role: user.role,
+                created_at: moment(user.created_at).format('YYYY-MM-DD'),
+                updated_at: moment(user.updated_at).format('YYYY-MM-DD'),
+                deleted_at: moment(user.deleted_at).format('YYYY-MM-DD'),
+            }));
 
             return res.status(200).json({
-                message: "sucess to get all users data", 
-                data: user
-            })
+                message: "Success to get all users data",
+                data: formatUser
+            });
         } catch (error) {
+            console.error('Error fetching users:', error);
             return res.status(500).json({
-                message: "internal server error", 
+                message: "Internal server error",
                 error: error.message
-            })
+            });
         }
-    }, 
-    getUserById: async(req, res) => {
-        const id = req.params.id; 
-        const sql = "SELECT * FROM users WHERE id = ?"; 
+    },
+    getUserById: async (req, res) => {
+        const id = req.params.id
+        const sql = `
+            SELECT 
+                id, 
+                username, 
+                name, 
+                email, 
+                role, 
+                created_at, 
+                updated_at, 
+                deleted_at 
+            FROM 
+                users 
+            WHERE 
+                id = ?
+        `;
 
         try {
-            const user = await new Promise((resolve, reject) => {
-                connection.query(sql, id, (error, result) => {
+            const users = await new Promise((resolve, reject) => {
+                connection.query(sql, [id], (error, results) => {
                     if (error) {
-                        reject(error); 
+                        return reject(error);
                     }
-                    resolve(result); 
-                })
-            })
-    
+                    resolve(results);
+                });
+            });
+
+            if (users.length === 0) {
+                return res.status(404).json({
+                    message: "User not found"
+                });
+            }
+
+            const formatUser = users.map(user => ({
+                id: user.id,
+                username: user.username,
+                name: user.name,
+                email: user.email,
+                role: user.role,
+                created_at: moment(user.created_at).format('YYYY-MM-DD'),
+                updated_at: moment(user.updated_at).format('YYYY-MM-DD'),
+                deleted_at: moment(user.deleted_at).format('YYYY-MM-DD'),
+            }));
+
             return res.status(200).json({
-                message: "sucess to get user data by id", 
-                data: user
-            })
+                message: "Success to users data by id",
+                data: formatUser
+            });
         } catch (error) {
+            console.error('Error fetching user:', error);
             return res.status(500).json({
-                message: "internal server error", 
+                message: "Internal server error",
                 error: error.message
-            })
+            });
         }
-    }, 
+    },
     addUser: async(req, res) => {
         const { username, name, email, password, role } = req.body
         const sql = "INSERT INTO users (username, name, email, password, role) VALUE (?, ?, ?, ?, ?)"; 

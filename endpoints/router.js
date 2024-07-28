@@ -30,15 +30,15 @@ router.put('/user/:id', AccesToken, checkRole('admin'), DataUsers.updateUser);
 router.delete('/user/:id', AccesToken, checkRole('admin'), DataUsers.deleteUser);
 
 const Predict = require('../controller/Predict');
-const upload = multer({
-    storage: multer.memoryStorage()
-});
+const upload = multer({storage: multer.memoryStorage()});
 router.post('/predict', AccesToken, checkRole('user'), upload.single('file'), Predict.predict);
+
+const history = require('../controller/History'); 
+router.get('/history', AccesToken, checkRole('user'), history.readHistory);
+router.delete('/history/:id', AccesToken, checkRole('user'), history.deleteHistory);
 // TODO
-// user 
 // update password
 // update datadiri
-// nampilin history prediksi berdasarkan user id
 
 // admin
 // admin dashboard

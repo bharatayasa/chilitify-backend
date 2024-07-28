@@ -1,11 +1,12 @@
 const connection = require('../config/db');
+const moment = require('moment'); 
 
 module.exports = {
     getAllDataDescription: async(req, res) => {
-        const sql = "SELECT * FROM description"
+        const sql = `SELECT id, class, description, prevention, deleted_at FROM description`
 
         try {
-            const description = await new Promise((resolve, reject) => {
+            const descriptions = await new Promise((resolve, reject) => {
                 connection.query(sql, (error, result) => {
                     if (error) {
                         reject(error);
@@ -14,9 +15,17 @@ module.exports = {
                 })
             })
 
+            const formatDescription = descriptions.map(description => ({
+                id: description.id,
+                calss: description.class,
+                description: description.description,
+                prevention: description.prevention,
+                deleted_at: moment(description.deleted_at).format('YYYY-MM-DD')
+            }))
+
             return res.status(200).json({
                 message: "sucess to get data", 
-                data: description
+                data: formatDescription
             })
         } catch (error) {
             return res.status(500).json({
