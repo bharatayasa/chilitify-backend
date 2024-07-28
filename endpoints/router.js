@@ -34,5 +34,17 @@ const upload = multer({
     storage: multer.memoryStorage()
 });
 router.post('/predict', AccesToken, checkRole('user'), upload.single('file'), Predict.predict);
+// TODO
+// user 
+// update password
+// update datadiri
+// nampilin history prediksi berdasarkan user id
+
+// admin
+// admin dashboard
+// data total / class penyakit (diagram)
+// total prediksi dalam 1 hari
+// total prediksi
+// total user
 
 module.exports = router
