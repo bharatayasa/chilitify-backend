@@ -5,21 +5,21 @@ const moment = require('moment');
 module.exports = {
     getAllUsers: async (req, res) => {
         const sql = `
-                SELECT
-                    id, 
-                    username, 
-                    name, 
-                    email,
-                    role, 
-                    created_at, 
-                    updated_at, 
-                    deleted_at 
-                FROM 
-                    users 
-                ORDER BY 
-                    id DESC
-            `;
-
+            SELECT
+                id, 
+                username, 
+                name, 
+                email,
+                role, 
+                created_at, 
+                updated_at, 
+                deleted_at 
+            FROM 
+                users 
+            ORDER BY 
+                id DESC
+        `;
+    
         try {
             const users = await new Promise((resolve, reject) => {
                 connection.query(sql, (error, result) => {
@@ -29,19 +29,19 @@ module.exports = {
                     resolve(result);
                 });
             });
-
+    
             const formatUser = users.map(user => ({
                 id: user.id,
-                username: user.username,
                 name: user.name,
                 email: user.email,
                 role: user.role,
                 created_at: moment(user.created_at).format('YYYY-MM-DD'),
                 updated_at: moment(user.updated_at).format('YYYY-MM-DD'),
-                deleted_at: moment(user.deleted_at).format('YYYY-MM-DD'),
+                deletedAt: user.deleted_at ? moment(user.deleted_at).toISOString() : null 
             }));
-
+    
             return res.status(200).json({
+                success: true,
                 message: "Success to get all users data",
                 data: formatUser
             });
@@ -99,6 +99,7 @@ module.exports = {
             }));
 
             return res.status(200).json({
+                success: true,
                 message: "Success to users data by id",
                 data: formatUser
             });
@@ -142,6 +143,7 @@ module.exports = {
             })
 
             return res.status(201).json({
+                success: true,
                 message: "success to add data", 
                 data: user
             })

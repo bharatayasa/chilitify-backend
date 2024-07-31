@@ -42,6 +42,7 @@ module.exports = {
             }));
 
             return res.status(200).json({
+                success: true,
                 message: "Success to get all prediction data",
                 data: formattedPredictions
             });

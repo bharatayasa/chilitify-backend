@@ -56,9 +56,11 @@ module.exports = {
                 success: true,
                 message: 'Login successful',
                 data: {
-                    id: user[0].id,
-                    username: user[0].username,
-                    role: user[0].role,
+                    user:{
+                        id: user[0].id,
+                        username: user[0].username,
+                        role: user[0].role,
+                    },
                     token: token,
                 }
             });
