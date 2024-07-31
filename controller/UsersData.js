@@ -155,33 +155,33 @@ module.exports = {
             })
         }
     }, 
-    updateUser: async(req, res) => {
-        const { username, name, email, password, role } = req.body
+    updateUser: async (req, res) => {
+        const { username, name, email, role } = req.body;
         const id = req.params.id; 
-        const sql = "UPDATE users SET username = ?, name = ?, email = ?, password = ? , role = ? WHERE id = ?";
-
+    
+        const sql = "UPDATE users SET username = ?, name = ?, email = ?, role = ? WHERE id = ?";
+    
         try {
-            const hashedPassword = await bcrypt.hash(password, 10);
             const user = await new Promise((resolve, reject) => {
-                connection.query(sql, [username, name, email, hashedPassword, role, id], (error, result) => {
+                connection.query(sql, [username, name, email, role, id], (error, result) => {
                     if (error) {
-                        reject(error)
+                        reject(error);
                     }
                     resolve(result);
-                })
-            })
-
-            return res.status(201).json({
-                message: "success to update data", 
+                });
+            });
+    
+            return res.status(200).json({
+                message: "Success to update data",
                 data: user
-            })
+            });
         } catch (error) {
             return res.status(500).json({
-                message: "internal server error", 
+                message: "Internal server error",
                 error: error.message
-            })
+            });
         }
-    }, 
+    },
     deleteUser: async(req, res) => {
         const id = req.params.id; 
         const sql = "UPDATE users SET deleted_at = NOW() WHERE id = ?"
