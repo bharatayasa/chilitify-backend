@@ -32,12 +32,13 @@ module.exports = {
     
             const formatUser = users.map(user => ({
                 id: user.id,
+                username: user.username,
                 name: user.name,
                 email: user.email,
                 role: user.role,
-                created_at: moment(user.created_at).format('YYYY-MM-DD'),
-                updated_at: moment(user.updated_at).format('YYYY-MM-DD'),
-                deletedAt: user.deleted_at ? moment(user.deleted_at).toISOString() : null 
+                created_at: moment(user.created_at).format('MM-DD-YYYY'),
+                updated_at: moment(user.updated_at).format('MM-DD-YYYY'),
+                deleted_at: moment(user.deleted_at).format('MM-DD-YYYY'),
             }));
     
             return res.status(200).json({
@@ -160,22 +161,6 @@ module.exports = {
         const sql = "UPDATE users SET username = ?, name = ?, email = ?, password = ? , role = ? WHERE id = ?";
 
         try {
-            const sqlCheck = 'SELECT * FROM users WHERE username = ? OR email = ?';
-            const existingUser = await new Promise((resolve, reject) => {
-                connection.query(sqlCheck, [username, email], (error, results) => {
-                    if (error) {
-                        return reject(error);
-                    }
-                    resolve(results);
-                });
-            });
-            
-            if (existingUser.length > 0) {
-                return res.status(400).json({
-                    message: 'Username or email already exists.'
-                });
-            }
-
             const hashedPassword = await bcrypt.hash(password, 10);
             const user = await new Promise((resolve, reject) => {
                 connection.query(sql, [username, name, email, hashedPassword, role, id], (error, result) => {
