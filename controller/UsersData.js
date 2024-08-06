@@ -36,9 +36,9 @@ module.exports = {
                 name: user.name,
                 email: user.email,
                 role: user.role,
-                created_at: moment(user.created_at).format('MM-DD-YYYY'),
-                updated_at: moment(user.updated_at).format('MM-DD-YYYY'),
-                deleted_at: moment(user.deleted_at).format('MM-DD-YYYY'),
+                created_at: moment(user.created_at).format('DD-MM-YYYY'),
+                updated_at: moment(user.updated_at).format('DD-MM-YYYY'),
+                deleted_at: moment(user.deleted_at).format('DD-MM-YYYY'),
             }));
     
             return res.status(200).json({
@@ -94,9 +94,9 @@ module.exports = {
                 name: user.name,
                 email: user.email,
                 role: user.role,
-                created_at: moment(user.created_at).format('YYYY-MM-DD'),
-                updated_at: moment(user.updated_at).format('YYYY-MM-DD'),
-                deleted_at: moment(user.deleted_at).format('YYYY-MM-DD'),
+                created_at: moment(user.created_at).format('DD-MM-YYYY'),
+                updated_at: moment(user.updated_at).format('DD-MM-YYYY'),
+                deleted_at: moment(user.deleted_at).format('DD-MM-YYYY'),
             }));
 
             return res.status(200).json({
@@ -198,6 +198,31 @@ module.exports = {
 
             return res.status(201).json({
                 message: "sucess to delete data", 
+                data: user
+            })
+        } catch (error) {
+            return res.status(500).json({
+                message: "internal server error", 
+                error: error.message
+            })
+        }
+    },
+    restoreUser: async(req, res) => {
+        const id = req.params.id; 
+        const sql = "UPDATE users SET deleted_at = NULL WHERE id = ?"
+
+        try {
+            const user = await new Promise((resolve, reject) => {
+                connection.query(sql, id, (error, result) => {
+                    if (error) {
+                        reject(error)
+                    }
+                    resolve(result)
+                })
+            })
+
+            return res.status(201).json({
+                message: "sucess to restore data", 
                 data: user
             })
         } catch (error) {

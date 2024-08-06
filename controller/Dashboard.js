@@ -99,5 +99,82 @@ module.exports = {
                 error: error.message
             });
         }
+    }, 
+    totalPredictNow: async (req, res) => {
+        const sql = `
+            SELECT 
+                d.class,
+                COUNT(*) AS count
+            FROM 
+                Predictions p
+            INNER JOIN 
+                description d ON p.description_id = d.id
+            WHERE 
+                p.deleted_at IS NULL
+                AND DATE(p.created_at) = CURDATE()
+            GROUP BY 
+                d.class
+        `;
+        
+        try {
+            const results = await new Promise((resolve, reject) => {
+                connection.query(sql, (error, result) => {
+                    if (error) {
+                        return reject(error);
+                    }
+                    resolve(result); 
+                });
+            });
+    
+            return res.status(200).json({
+                message: "Success to get total class count for today", 
+                data: results
+            });
+        } catch (error) {
+            console.error('Error fetching total class count for today:', error);
+            return res.status(500).json({
+                message: "Internal server error",
+                error: error.message
+            });
+        }
+    },
+    totalPredictSumToday: async (req, res) => {
+        // Query SQL untuk menghitung jumlah total prediksi hari ini
+        const sql = `
+            SELECT 
+                COUNT(*) AS total_count
+            FROM 
+                Predictions
+            WHERE 
+                deleted_at IS NULL
+                AND DATE(created_at) = CURDATE()
+        `;
+        
+        try {
+            const results = await new Promise((resolve, reject) => {
+                connection.query(sql, (error, result) => {
+                    if (error) {
+                        return reject(error);
+                    }
+                    resolve(result); 
+                });
+            });
+    
+            const totalCount = results[0].total_count;
+    
+            return res.status(200).json({
+                data: [
+                    {
+                        total: totalCount
+                    }
+                ]
+            });
+        } catch (error) {
+            console.error('Error fetching total prediction count for today:', error);
+            return res.status(500).json({
+                message: "Internal server error",
+                error: error.message
+            });
+        }
     }
 }

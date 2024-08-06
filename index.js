@@ -17,8 +17,8 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(router);
 
-const port = process.env.PORT; 
-const host = process.env.HOST; 
+const port = process.env.PORT || 8080; 
+const host = process.env.HOST || "0.0.0.0"; 
 
 app.listen(port, host, () => {
     console.log(`server up and running at http://${host}:${port}`);

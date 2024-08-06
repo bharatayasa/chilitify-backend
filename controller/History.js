@@ -12,7 +12,8 @@ module.exports = {
                         p.created_at, 
                         d.description,
                         d.class,
-                        d.prevention
+                        d.prevention,
+                        p.image_name
                     FROM 
                         Predictions p
                     INNER JOIN 
@@ -33,12 +34,15 @@ module.exports = {
                 });
             });
 
+            const baseUrl = `${req.protocol}://${req.get('host')}/uploads`;
+
             const formattedPredictions = predictions.map(prediction => ({
                 class: prediction.class,
                 description: prediction.description,
                 prevention: prediction.prevention,
                 confidence: prediction.confidence,
                 created_at: moment(prediction.created_at).format('YYYY-MM-DD'),
+                image_url: prediction.image_name ? `${baseUrl}/${prediction.image_name}` : null
             }));
 
             return res.status(200).json({

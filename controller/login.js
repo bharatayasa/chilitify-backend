@@ -32,7 +32,16 @@ module.exports = {
                 });
             }
 
-            const validPassword = await bcrypt.compare(password, user[0].password);
+            const userData = user[0];
+
+            if (userData.deleted_at !== null) {
+                return res.status(403).json({
+                    success: false,
+                    message: 'Your account has been deactivated. Please contact support.'
+                });
+            }
+
+            const validPassword = await bcrypt.compare(password, userData.password);
             if (!validPassword) {
                 return res.status(400).json({
                     success: false,
@@ -42,9 +51,9 @@ module.exports = {
 
             const token = jwt.sign(
                 { 
-                    id: user[0].id, 
-                    username: user[0].username, 
-                    role: user[0].role 
+                    id: userData.id, 
+                    username: userData.username, 
+                    role: userData.role 
                 }, 
                 secretKey, 
                 { 
@@ -56,10 +65,10 @@ module.exports = {
                 success: true,
                 message: 'Login successful',
                 data: {
-                    user:{
-                        id: user[0].id,
-                        username: user[0].username,
-                        role: user[0].role,
+                    user: {
+                        id: userData.id,
+                        username: userData.username,
+                        role: userData.role,
                     },
                     token: token,
                 }

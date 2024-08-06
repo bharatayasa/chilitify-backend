@@ -3,7 +3,7 @@ const moment = require('moment');
 
 module.exports = {
     getAllDataDescription: async(req, res) => {
-        const sql = `SELECT id, class, description, prevention, deleted_at FROM description`
+        const sql = `SELECT id, class, description, prevention, created_at, updated_at, deleted_at FROM description`
 
         try {
             const descriptions = await new Promise((resolve, reject) => {
@@ -20,7 +20,9 @@ module.exports = {
                 calss: description.class,
                 description: description.description,
                 prevention: description.prevention,
-                deleted_at: moment(description.deleted_at).format('YYYY-MM-DD')
+                created_at: moment(description.created_at).format('DD-MM-YYYY'),
+                updated_at: moment(description.updated_at).format('DD-MM-YYYY'),
+                deleted_at: moment(description.deleted_at).format('DD-MM-YYYY'),
             }))
 
             return res.status(200).json({
@@ -134,5 +136,30 @@ module.exports = {
                 error: error.message
             })
         }
-    }
+    },
+    restoreDescriptionData: async (req, res) => {
+        const id = req.params.id; 
+        const sql = "UPDATE description SET deleted_at = NULL WHERE id = ?"
+
+        try {
+            const data = await new Promise((resolve, reject) => {
+                connection.query(sql, id, (error, result) => {
+                    if (error) {
+                        reject(error);
+                    }
+                    resolve(result); 
+                })
+            })
+
+            return res.status(201).json({
+                message: "success restore description data",
+                data: data
+            })
+        } catch (error) {
+            return res.status(500).json({
+                message: "internal server error", 
+                error: error.message
+            })
+        }
+    },
 }

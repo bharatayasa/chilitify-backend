@@ -1,8 +1,10 @@
 const axios = require('axios');
 const FormData = require('form-data');
 const dotenv = require('dotenv');
+const fs = require('fs');
 const connection = require('../config/db');
-dotenv.config(); 
+dotenv.config();
+
 const model_api = process.env.MODEL_API;
 
 module.exports = {
@@ -11,10 +13,12 @@ module.exports = {
             return res.status(404).send('No image uploaded.');
         }
 
+        // console.log('Uploaded file info:', req.file);
+
         try {
             const form = new FormData();
-            form.append('file', req.file.buffer, {
-                filename: req.file.originalname,
+            form.append('file', fs.createReadStream(req.file.path), {
+                filename: req.file.filename,
                 contentType: req.file.mimetype
             });
 
@@ -43,27 +47,30 @@ module.exports = {
                 });
             });
 
-            const {description_id, user_id,	confidence} = req.body
-            const insertPredict = `INSERT INTO Predictions (description_id, user_id, confidence) VALUE (${data.id}, ${req.user.id}, ${result.confidence})`
+            const imageUrl = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
+
+            const insertPredict = `INSERT INTO Predictions (description_id, user_id, confidence, image_name) VALUES (?, ?, ?, ?)`;
             const insertPrediction = await new Promise((resolve, reject) => {
-                connection.query(insertPredict, [description_id, user_id,	confidence], (error, result) => {
+                connection.query(insertPredict, [data.id, req.user.id, result.confidence, req.file.filename], (error, result) => {
+                // connection.query(insertPredict, [data.id, req.user.id, result.confidence, imageUrl], (error, result) => {
                     if (error) {
-                        reject(error)
+                        return reject(error);
                     }
-                    resolve(result)
-                })
-            })
+                    resolve(result);
+                });
+            });
 
             return res.status(200).json({
                 message: "Success to predict",
                 user_id: req.user.id,
                 data,
                 confidence: result.confidence,
-                insert_status: insertPrediction.protocol41
+                image_url: imageUrl,
+                insert_status: insertPrediction.affectedRows > 0
             });
         } catch (error) {
-            console.error('Error uploading file:', error);
+            console.error('Error processing request:', error);
             return res.status(500).send('An error occurred');
         }
     }
-}
+};
